@@ -1,0 +1,927 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MYH" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="传统线程技术1. 创建线程的方法  
+
+继承Thread类，覆盖run方法
+实现Runnable接口
+
+2.  对Thread类的一些了解
+
+Runnable是一个接口，里面有run方法
+target变量是Thread类中Runnable
+run是Thread类实现了Runnable的接口，重写的方法。
+start是启动线程的方法
+在Thread类中，调用关系为：start-&amp;gt;start0-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程小笔记">
+<meta property="og:url" content="http://yoursite.com/2017/01/08/Java多线程小笔记/index.html">
+<meta property="og:site_name" content="MYH">
+<meta property="og:description" content="传统线程技术1. 创建线程的方法  
+
+继承Thread类，覆盖run方法
+实现Runnable接口
+
+2.  对Thread类的一些了解
+
+Runnable是一个接口，里面有run方法
+target变量是Thread类中Runnable
+run是Thread类实现了Runnable的接口，重写的方法。
+start是启动线程的方法
+在Thread类中，调用关系为：start-&amp;gt;start0-">
+<meta property="og:updated_time" content="2017-01-09T05:58:25.051Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java多线程小笔记">
+<meta name="twitter:description" content="传统线程技术1. 创建线程的方法  
+
+继承Thread类，覆盖run方法
+实现Runnable接口
+
+2.  对Thread类的一些了解
+
+Runnable是一个接口，里面有run方法
+target变量是Thread类中Runnable
+run是Thread类实现了Runnable的接口，重写的方法。
+start是启动线程的方法
+在Thread类中，调用关系为：start-&amp;gt;start0-">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/08/Java多线程小笔记/"/>
+
+  <title> Java多线程小笔记 | MYH </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d4af761da5fd0af3ce5328c44c731009";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MYH</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java多线程小笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-08T20:27:26+08:00" content="2017-01-08">
+              2017-01-08
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/08/Java多线程小笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/08/Java多线程小笔记/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="传统线程技术"><a href="#传统线程技术" class="headerlink" title="传统线程技术"></a>传统线程技术</h2><p><strong>1. 创建线程的方法</strong>  </p>
+<ul>
+<li>继承Thread类，覆盖run方法</li>
+<li>实现Runnable接口</li>
+</ul>
+<p><strong>2.  对Thread类的一些了解</strong></p>
+<ul>
+<li>Runnable是一个接口，里面有run方法</li>
+<li>target变量是Thread类中Runnable</li>
+<li>run是Thread类实现了Runnable的接口，重写的方法。</li>
+<li>start是启动线程的方法</li>
+<li>在Thread类中，调用关系为：start-&gt;start0-&gt;run-&gt;target.run</li>
+</ul>
+<p>Thread类的run方法源码</p>
+<pre><code>public void run() {
+    if (target != null) {
+         target.run();
+     }
+ }
+</code></pre><p>Thread类的target属性</p>
+<pre><code>/* What will be run. */
+private Runnable target;
+</code></pre><p>target属性由private void init(ThreadGroup g, Runnable target, String name,long stackSize, AccessControlContext acc)方法初始化。init方法在Thread类的构造方法里被调用</p>
+<p><strong>3.线程范围内共享数据</strong></p>
+<p>什么是线程范围内共享数据——某个线程内如何共享数据，保证各个线程的数据不交叉。</p>
+<p>这么说来，可以用Map这个数据结构来实现，定义一个Map，线程为键，数据为值，Map中的每一项即是为每个线程准备的数据,这样在一个线程中数据是一致的。</p>
+<pre><code>package com.iot.thread;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * Created by brian on 2016/2/4.
+ */
+public class ThreadScopeShareData {
+    //准备一个哈希表，为每个线程准备数据
+    private  static Map&lt;Thread,Integer&gt; threadData = new HashMap&lt;&gt;();
+    public static void main(String[] args) {
+        for(int i=0;i&lt;2;i++){
+            new Thread(
+                    new Runnable() {
+                @Override
+                public void run() {
+                    int data = new Random().nextInt();
+                    threadData.put(Thread.currentThread(),data);
+                    System.out.println(Thread.currentThread()+&quot; put data：&quot;+data);
+                    new A().get();
+                    new B().get();
+                }
+            }).start();
+        }
+    }
+    static  class A{
+        public void get(){
+            int data = threadData.get(Thread.currentThread());
+            System.out.println(&quot;A from &quot;+Thread.currentThread()+&quot; get data &quot;+data);
+        }
+    }
+
+    static  class B{
+        public void get(){
+            int data = threadData.get(Thread.currentThread());
+            System.out.println(&quot;B from &quot;+Thread.currentThread()+&quot; get data &quot;+data);
+        }
+    }
+}
+</code></pre><p>但是API给开发者提供了一个ThreadLocal类<br><a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/ThreadLocal.html" target="_blank" rel="external">java.lang:Class ThreadLocal<t></t></a></p>
+<ul>
+<li><p>单变量<br>使用ThreadLocal类型的对象代替Map即可</p>
+</li>
+<li><p>多变量<br>定义一个对象来封装多个变量，然后在ThreadLocal中存储整个对象<br>多变量时，最好将ThreadLocal类放在数据类的内部，数据类采用单例模式，这样，新建对象和获取对象都会更方便，同时封装性更强。</p>
+</li>
+</ul>
+<p><strong>4.多线程访问共享数据</strong><br>几种方式</p>
+<ul>
+<li>线程执行的代码相同，使用同一个Runnable对象，Runnable对象中有共享数据</li>
+<li>线程执行的代码不同，将共享数据封装在另一个对象中（操作数据的方法也在该对象完成），将    这个对象逐一传递给各个Runnable对象[<strong>本质：共享数据的对象作为参数传给Runnable对象</strong>]</li>
+<li>线程执行的代码不同，将Runnable对象作为某一个的内部类，共享数据作为这个外部类的成员变量（操作数据的方法放在外部类）。[<strong>本质：不同内部类共享外部类数据</strong>]</li>
+<li>结合上两种方式，将共享数据封装在另一对象中（操作数据的方法也在该对象完成），该对象作为这个外部类的成员变量，将Runnable对象作为内部类</li>
+</ul>
+<p>设计5个线程，其中三个线程每次对j增加1，另外两个线程对j每次减少1</p>
+<pre><code>package com.iot.thread;
+
+/**
+ * Created by brian on 2016/2/4.
+ */
+public class MutiThreadShareData {
+
+    private static MutiShareData mutiShareData = new MutiShareData();
+
+    public static void main(String[] args) {
+
+        for(int i=0;i&lt;3;i++){
+            new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println(Thread.currentThread()+&quot;:{j from &quot;+ mutiShareData.getJ()+&quot; + to: &quot;+mutiShareData.increment()+&quot;}&quot;);
+                        }
+                    }
+            ).start();
+        }
+
+        for(int i=0;i&lt;2;i++){
+            new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println(Thread.currentThread()+&quot;:{j from &quot;+ mutiShareData.getJ()+&quot; - to: &quot;+mutiShareData.decrement()+&quot;}&quot;);
+                        }
+                    }
+            ).start();
+        }
+    }
+
+}
+
+/**
+ * 将共享数据封装在另一对象中（操作数据的方法也在该对象完成）
+ */
+class MutiShareData{
+    private int j = 0;
+    public synchronized  int increment(){
+        return  ++j;
+    }
+    public synchronized int  decrement(){
+        return --j;
+    }
+
+    public synchronized int getJ() {
+        return j;
+    }
+
+    public synchronized void setJ(int j) {
+        this.j = j;
+    }
+}    
+</code></pre><p><strong>5.多线程并发库</strong></p>
+<blockquote>
+<p>原子性操作类<br>java.util.concurrent.atomic包下的类:<br><a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/util/concurrent/atomic/package-summary.html" target="_blank" rel="external">Package java.util.concurrent.atomic</a></p>
+<p>线程池<br><a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/util/concurrent/Executors.html" target="_blank" rel="external">java.util.concurrent:Class Executors</a></p>
+<p>常用线程池<br>几种常用的的生成线程池的方法：<br>newCacheThreadPool<br>newFixedThreadPool<br>newScheduledThreadPool<br>newSingleThreadExecutor<br>newSingleThreadScheduledExecutor</p>
+</blockquote>
+<pre><code>ex：newFixedThreadPool
+
+ExecutorService threadPool = Executors.newFixedThreadPool(3);
+for(int i=0;i&lt;10;i++){
+    threadPool.execute(new Runnable() {
+        @Override
+        public void run() {
+            System.out.println(Thread.currentThread().getName());
+        }
+    });
+}
+
+用线程池启动定时器
+例子：类似Timer的定时执行
+
+Executors.newScheduledThreadPool(3).scheduleAtFixedRate(
+            new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(&quot;ScheduledThreadPool &quot;+Thread.currentThread().getName());
+                }
+            },3,1, TimeUnit.SECONDS);
+</code></pre><blockquote>
+<p>Callable&amp;Future<br>ExecutorService在Executor的基础上增加了一些方法，其中有两个核心的方法：</p>
+<p>Future&lt;?&gt; submit(Runnable task)</p>
+<p><t> Future<t> submit(Callable<t> task)</t></t></t></p>
+<p>这两个方法都是向线程池中提交任务，它们的区别在于Runnable在执行完毕后没有结果，Callable执行完毕后有一个结果。这在多个线程中传递状态和结果是非常有用的。另外他们的相同点在于都返回一个Future对象。Future对象可以阻塞线程直到运行完毕（获取结果，如果有的话），也可以取消任务执行，当然也能够检测任务是否被取消或者是否执行完毕。</p>
+</blockquote>
+<pre><code>Lock
+Lock功能类似传统多线程技术里的synchronized，实现线程互斥，但更加面向对象。将需要互斥的代码片段放到lock.lock();和lock.unlock();之间。
+
+class A{
+    private Lock lock = new ReentrantLock();
+
+    public void function(){
+        lock.lock();
+        try{
+            //功能代码
+        }finally{
+            lock.unlock();
+        }
+    }
+}
+
+
+读写锁
+java.util.concurrent.locks:Class ReentrantReadWriteLock
+javaDoc文档读写锁例子,缓存:
+
+class CachedData {
+   Object data;
+   volatile boolean cacheValid;
+   final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+
+   void processCachedData() {
+     rwl.readLock().lock();
+     if (!cacheValid) {
+       // Must release read lock before acquiring write lock
+       rwl.readLock().unlock();
+       rwl.writeLock().lock();
+       try {
+         // Recheck state because another thread might have
+         // acquired write lock and changed state before we did.
+         if (!cacheValid) {
+           data = ...
+           cacheValid = true;
+         }
+         // Downgrade by acquiring read lock before releasing write lock
+         rwl.readLock().lock();
+       } finally {
+         rwl.writeLock().unlock(); // Unlock write, still hold read
+       }
+     }
+
+     try {
+       use(data);
+     } finally {
+       rwl.readLock().unlock();
+     }
+   }
+ }
+重点注意在释放写锁前加读锁那部分代码，
+注释为// Downgrade by acquiring read lock before releasing write lock。
+自己挂了写锁，再挂读锁是可以的，这面涉及的技巧以后再研究。
+
+Condition
+Condition类似于传统多线程技术中的Object.wait和Object.notify,实现线程间同步。
+javaDoc文档例子，可阻塞队列
+
+class BoundedBuffer例子
+
+class BoundedBuffer {
+   final Lock lock = new ReentrantLock();
+   final Condition notFull  = lock.newCondition(); 
+   final Condition notEmpty = lock.newCondition(); 
+
+   final Object[] items = new Object[100];
+   int putptr, takeptr, count;
+
+   public void put(Object x) throws InterruptedException {
+     lock.lock();
+     try {
+       while (count == items.length)
+         notFull.await();
+       items[putptr] = x;
+       if (++putptr == items.length) putptr = 0;
+       ++count;
+       notEmpty.signal();
+     } finally {
+       lock.unlock();
+     }
+   }
+
+   public Object take() throws InterruptedException {
+     lock.lock();
+     try {
+       while (count == 0)
+         notEmpty.await();
+       Object x = items[takeptr];
+       if (++takeptr == items.length) takeptr = 0;
+       --count;
+       notFull.signal();
+       return x;
+     } finally {
+       lock.unlock();
+     }
+   }
+ }
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/06/Java类加载器小笔记/" rel="next" title="Java类加载器小笔记">
+                <i class="fa fa-chevron-left"></i> Java类加载器小笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/09/Tomcat/" rel="prev" title="Tomcat">
+                Tomcat <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/08/Java多线程小笔记/"
+           data-title="Java多线程小笔记" data-url="http://yoursite.com/2017/01/08/Java多线程小笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="MYH" />
+          <p class="site-author-name" itemprop="name">MYH</p>
+          <p class="site-description motion-element" itemprop="description">死亡如风，常伴吾身</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/MYHZXN" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2094911920/home?wvr=5" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#传统线程技术"><span class="nav-number">1.</span> <span class="nav-text">传统线程技术</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MYH</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"myhzxn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
