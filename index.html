@@ -258,6 +258,1217 @@
             
               
                 
+                <a class="post-title-link" href="/2018/02/06/Elasticsearch常用API/" itemprop="url">
+                  Elasticsearch常用API
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-06T00:00:00+08:00" content="2018-02-06">
+              2018-02-06
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/06/Elasticsearch常用API/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/06/Elasticsearch常用API/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="INDEX-API"><a href="#INDEX-API" class="headerlink" title="INDEX API"></a>INDEX API</h3><blockquote>
+<p>创建索引</p>
+<p><strong>tips：</strong>如果你想禁止自动创建索引，你 可以通过在 config/elasticsearch.yml 的每个节点下添加下面的配置：action.auto_create_index: false</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;settings&quot;: { 
+        &quot;number_of_shards&quot; :   1, //每个索引的主分片数，默认值是 5 。这个配置在索引创建后不能修改。
+        &quot;number_of_replicas&quot; : 0  //每个主分片的副本数，默认值是 1 。对于活动的索引库，这个配置可以随时修改。         
+     },
+    &quot;mappings&quot;: {
+        &quot;type_one&quot;: { ... any mappings ... },
+        &quot;type_two&quot;: { ... any mappings ... },
+        ...
+    }
+}
+</code></pre><blockquote>
+<p>修改索引设置</p>
+</blockquote>
+<pre><code>PUT /my_temp_index/_settings
+{
+    &quot;number_of_replicas&quot;: 1
+}    
+</code></pre><blockquote>
+<p>设置一个自定义分析器</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;settings&quot;: {
+        &quot;analysis&quot;: {
+            &quot;char_filter&quot;: { ... custom character filters ... },
+            &quot;tokenizer&quot;:   { ...    custom tokenizers     ... },
+            &quot;filter&quot;:      { ...   custom token filters   ... },
+            &quot;analyzer&quot;:    { ...    custom analyzers      ... }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>应用分析器</p>
+</blockquote>
+<pre><code>PUT /my_index/_mapping/my_type
+{
+    &quot;properties&quot;: {
+        &quot;title&quot;: {
+            &quot;type&quot;:      &quot;string&quot;,
+            &quot;analyzer&quot;:  &quot;my_analyzer&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>删除一个索引</p>
+</blockquote>
+<pre><code>DELETE /my_index
+</code></pre><blockquote>
+<p>删除多个索引</p>
+</blockquote>
+<pre><code>DELETE /index_one,index_two
+DELETE /index_*
+</code></pre><blockquote>
+<p>删除全部索引</p>
+</blockquote>
+<pre><code>DELETE /_all
+DELETE /*
+</code></pre><blockquote>
+<p>禁用_source存储</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;_source&quot;: {
+                &quot;enabled&quot;:  false
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>禁用_all字段</p>
+</blockquote>
+<pre><code>PUT /my_index/_mapping/my_type
+{
+    &quot;my_type&quot;: {
+        &quot;_all&quot;: { &quot;enabled&quot;: false }
+    }
+}
+</code></pre><blockquote>
+<p>通过 include_in_all 设置来逐个控制字段是否要包含在 _all 字段中，默认值是 true。</p>
+<p>在一个对象(或根对象)上设置 `include_in_all 可以修改这个对象中的所有字段的默认行为。</p>
+</blockquote>
+<pre><code>PUT /my_index/my_type/_mapping
+{
+    &quot;my_type&quot;: {
+        &quot;include_in_all&quot;: false,
+        &quot;properties&quot;: {
+            &quot;title&quot;: {
+                &quot;type&quot;:           &quot;string&quot;,
+                &quot;include_in_all&quot;: true
+            },
+            ...
+        }
+    }
+}
+</code></pre><blockquote>
+<p>使用 _default_ 映射为所有的类型禁用 _all 字段， 而只在 blog 类型启用</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;_default_&quot;: {
+            &quot;_all&quot;: { &quot;enabled&quot;:  false }
+        },
+        &quot;blog&quot;: {
+            &quot;_all&quot;: { &quot;enabled&quot;:  true  }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>查看映射</p>
+</blockquote>
+<pre><code>GET /gb/_mapping/tweet
+</code></pre><blockquote>
+<p>更新映射</p>
+</blockquote>
+<pre><code>PUT /gb
+{
+  &quot;mappings&quot;: {
+    &quot;tweet&quot; : {
+      &quot;properties&quot; : {
+        &quot;tweet&quot; : {
+          &quot;type&quot; :    &quot;string&quot;,
+          &quot;analyzer&quot;: &quot;english&quot;
+        },
+        &quot;date&quot; : {
+          &quot;type&quot; :   &quot;date&quot;
+        },
+        &quot;name&quot; : {
+          &quot;type&quot; :   &quot;string&quot;
+        },
+        &quot;user_id&quot; : {
+          &quot;type&quot; :   &quot;long&quot;
+        }
+      }
+    }
+  }
+}
+
+PUT /gb/_mapping/tweet
+{
+  &quot;properties&quot; : {
+    &quot;tag&quot; : {
+      &quot;type&quot; :    &quot;string&quot;,
+      &quot;index&quot;:    &quot;not_analyzed&quot;
+    }
+  }
+}
+</code></pre><blockquote>
+<p>映射分析</p>
+</blockquote>
+<pre><code>GET /gb/_analyze
+{
+  &quot;field&quot;: &quot;tweet&quot;,
+  &quot;text&quot;: &quot;Black-cats&quot; 
+}
+</code></pre><blockquote>
+<p>批量新增文档</p>
+</blockquote>
+<pre><code>POST /my_index/my_type/_bulk
+{ &quot;index&quot;: { &quot;_id&quot;: 1 }}
+{ &quot;title&quot;: &quot;The quick brown fox&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 2 }}
+{ &quot;title&quot;: &quot;The quick brown fox jumps over the lazy dog&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 3 }}
+{ &quot;title&quot;: &quot;The quick brown fox jumps over the quick dog&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 4 }}
+{ &quot;title&quot;: &quot;Brown fox brown dog&quot; }
+</code></pre><h3 id="Query-API"><a href="#Query-API" class="headerlink" title="Query API"></a>Query API</h3><blockquote>
+<p>空查询</p>
+</blockquote>
+<pre><code>GET /_search
+{}
+
+GET /index_2014*/type1,type2/_search
+{}
+
+GET /_search
+{
+    &quot;query&quot;: {
+        &quot;match_all&quot;: {}
+    }
+}
+</code></pre><blockquote>
+<p>分页</p>
+</blockquote>
+<pre><code>GET /_search
+{
+  &quot;from&quot;: 30,
+  &quot;size&quot;: 10
+}
+</code></pre><blockquote>
+<p>查询请求</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;tweet&quot;: &quot;elasticsearch&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>match查询</p>
+<p><strong>tips：</strong>如果你在一个全文字段上使用 match 查询，在执行查询前，它将用正确的分析器去分析查询字符串<br>如果在一个精确值的字段上使用它， 例如数字、日期、布尔或者一个 not_analyzed 字符串字段，那么它将会精确匹配给定的值</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;tweet&quot;: &quot;elasticsearch&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>multi_match </p>
+<p><strong>tips：</strong>查询可以在多个字段上执行相同的 match 查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;multi_match&quot;: {
+            &quot;query&quot;:    &quot;full text search&quot;,
+            &quot;fields&quot;:   [ &quot;title&quot;, &quot;body&quot; ]
+        }
+    }    
+}
+</code></pre><blockquote>
+<p>range 查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;range&quot;: {
+            &quot;age&quot;: {
+                &quot;gte&quot;:  20,
+                &quot;lt&quot;:   30
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>term查询</p>
+<p><strong>tips：</strong>用于精确值 匹配，这些精确值可能是数字、时间、布尔或者那些 not_analyzed 的字符串</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;term&quot;: { &quot;age&quot;: 26 }
+    }
+}
+</code></pre><blockquote>
+<p>terms查询</p>
+<p><strong>tips：</strong>terms 查询和 term 查询一样，但它允许你指定多值进行匹配。如果这个字段包含了指定值中的任何一个值，那么这个文档满足条件</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;terms&quot;: { 
+            &quot;tag&quot;: [ &quot;search&quot;, &quot;full_text&quot;, &quot;nosql&quot; ] 
+        }
+    }
+}
+</code></pre><blockquote>
+<p>exists 查询</p>
+<p><strong>tips：</strong>用于查找那些指定字段中有值 (exists) 的文档</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;exists&quot;: { 
+            &quot;field&quot;:    &quot;title&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>missing 查询</p>
+<p><strong>tips：</strong>用于查找那些指定字段中无值 (missing) 的文档</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;missing&quot;: { 
+            &quot;field&quot;:    &quot;title&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>组合查询</p>
+<p><strong>tips：</strong></p>
+<ul>
+<li>must 文档 必须 匹配这些条件才能被包含进来。</li>
+<li>must_not 文档 必须不 匹配这些条件才能被包含进来。</li>
+<li>should 如果满足这些语句中的任意语句，将增加 _score ，否则，无任何影响。它们主要用于修正每个文档的相关性得分。</li>
+<li>filter 必须 匹配，但它以不评分、过滤模式来进行。这些语句对评分没有贡献，只是根据过滤标准来排除或包含文档。</li>
+</ul>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+         &quot;bool&quot;: { 
+             &quot;must&quot;: {
+                 &quot;match&quot;: { &quot;part_name&quot;: &quot;保险&quot; }
+             },
+             &quot;must_not&quot; : {
+                 &quot;match&quot;: { &quot;create_person&quot; : &quot;STDINGSUN2&quot; }
+             },
+             &quot;should&quot; : {
+                 &quot;range&quot; : { &quot;price1&quot; : { &quot;gte&quot; : 1000} }
+             }
+         }
+    }
+}
+</code></pre><blockquote>
+<p>不评分查询</p>
+<p><strong>tips：</strong>用于你只需要执行一个 filter 而没有其它查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : { 
+        &quot;constant_score&quot;:   {
+            &quot;filter&quot;: {
+                &quot;term&quot;: { &quot;category&quot;: &quot;ebooks&quot; } 
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>验证查询语句</p>
+</blockquote>
+<pre><code>GET /gb/tweet/_validate/query
+{
+   &quot;query&quot;: {
+      &quot;tweet&quot; : {
+         &quot;match&quot; : &quot;really powerful&quot;
+      }
+   }
+}
+</code></pre><blockquote>
+<p>验证查询语句(带解释)</p>
+</blockquote>
+<pre><code>GET /gb/tweet/_validate/query?explain 
+{
+   &quot;query&quot;: {
+      &quot;tweet&quot; : {
+         &quot;match&quot; : &quot;really powerful&quot;
+      }
+   }
+}
+</code></pre><blockquote>
+<p>排序查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+         &quot;bool&quot; : {
+             &quot;filter&quot; : {
+                 &quot;match&quot; : {
+                     &quot;create_person&quot; : &quot;GD001&quot;
+                 }
+             }
+         }
+    },
+    &quot;sort&quot; : { &quot;@timestamp&quot; : { &quot;order&quot; : &quot;desc&quot; } }
+}
+</code></pre><blockquote>
+<p>多级排序查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+        &quot;bool&quot; : {
+            &quot;must&quot;:   { &quot;match&quot;: { &quot;tweet&quot;: &quot;manage text search&quot; }},
+            &quot;filter&quot; : { &quot;term&quot; : { &quot;user_id&quot; : 2 }}
+        }
+    },
+    &quot;sort&quot;: [
+        { &quot;date&quot;:   { &quot;order&quot;: &quot;desc&quot; }},
+        { &quot;_score&quot;: { &quot;order&quot;: &quot;desc&quot; }}
+    ]
+}
+</code></pre><blockquote>
+<p>字段多值的排序查询</p>
+<p><strong>tips：</strong>对于数字或日期，你可以将多值字段减为单值，这可以通过使用 min 、 max 、 avg 或是 sum 排序模式 </p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+        &quot;sort&quot;: {
+            &quot;dates&quot;: {
+                &quot;order&quot;: &quot;asc&quot;,
+                &quot;mode&quot;:  &quot;min&quot;
+            }
+    }
+}
+</code></pre><blockquote>
+<p>查询（获取特定的字段）</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;:   { &quot;match_all&quot;: {}},
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;created&quot; ]
+}
+</code></pre><blockquote>
+<p>查询（去除_source）</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;_source&quot;: false,
+    &quot;query&quot; : {
+        &quot;term&quot; : { &quot;user&quot; : &quot;kimchy&quot; }
+    }
+}
+</code></pre><blockquote>
+<p>查询（过滤某些字段）</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;_source&quot;: {
+        &quot;includes&quot;: [ &quot;obj1.*&quot;, &quot;obj2.*&quot; ],
+        &quot;excludes&quot;: [ &quot;*.description&quot; ]
+    },
+    &quot;query&quot; : {
+        &quot;term&quot; : { &quot;user&quot; : &quot;kimchy&quot; }
+    }
+}
+</code></pre><h3 id="DEEP-QUERY-API"><a href="#DEEP-QUERY-API" class="headerlink" title="DEEP QUERY API"></a>DEEP QUERY API</h3><blockquote>
+<p>SELECT &ensp;product<br>&ensp;&ensp;FROM   &ensp;products<br>&ensp;&ensp;WHERE  &ensp;(price = 20 OR productID = “XHDK-A-1293-#fJ3”)<br>&ensp;&ensp;&ensp;&ensp;AND  (price != 30)</p>
+</blockquote>
+<pre><code>GET /my_store/products/_search
+{
+   &quot;query&quot; : {
+      &quot;filtered&quot; : { 
+         &quot;filter&quot; : {
+            &quot;bool&quot; : {
+              &quot;should&quot; : [
+                 { &quot;term&quot; : {&quot;price&quot; : 20}}, 
+                 { &quot;term&quot; : {&quot;productID&quot; : &quot;XHDK-A-1293-#fJ3&quot;}} 
+              ],
+              &quot;must_not&quot; : {
+                 &quot;term&quot; : {&quot;price&quot; : 30} 
+              }
+           }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>SELECT document<br>&ensp;&ensp;FROM   products<br>&ensp;&ensp;&ensp;&ensp;WHERE  productID = “KDKE-B-9947-#kL5”<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;      OR (productID = “JODL-X-1937-#pV7”<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;           AND price = 30 ) </p>
+</blockquote>
+<pre><code>GET /my_store/products/_search
+{
+   &quot;query&quot; : {
+      &quot;filtered&quot; : {
+         &quot;filter&quot; : {
+            &quot;bool&quot; : {
+              &quot;should&quot; : [
+                { &quot;term&quot; : {&quot;productID&quot; : &quot;KDKE-B-9947-#kL5&quot;}}, 
+                { &quot;bool&quot; : { 
+                  &quot;must&quot; : [
+                    { &quot;term&quot; : {&quot;productID&quot; : &quot;JODL-X-1937-#pV7&quot;}}, 
+                    { &quot;term&quot; : {&quot;price&quot; : 30}} 
+                  ]
+                }}
+              ]
+           }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>range 日期高级查法</p>
+</blockquote>
+<pre><code>&quot;range&quot; : {
+    &quot;timestamp&quot; : {
+        &quot;gt&quot; : &quot;now-1h&quot;
+    }
+}
+
+&quot;range&quot; : {
+    &quot;timestamp&quot; : {
+        &quot;gt&quot; : &quot;2014-01-01 00:00:00&quot;,
+        &quot;lt&quot; : &quot;2014-01-01 00:00:00||+1M&quot; 
+    }
+}
+</code></pre><blockquote>
+<p>match查询（提高精度）</p>
+</blockquote>
+<pre><code>GET /my_index/my_type/_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;title&quot;: {      
+                &quot;query&quot;:    &quot;BROWN DOG!&quot;,
+                &quot;operator&quot;: &quot;and&quot;
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>match查询（控制精度）<br><br>match 查询支持 minimum_should_match 最小匹配参数</p>
+</blockquote>
+<pre><code>GET /my_index/my_type/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;title&quot;: {
+        &quot;query&quot;:                &quot;quick brown dog&quot;,
+        &quot;minimum_should_match&quot;: &quot;75%&quot;
+      }
+    }
+  }
+}
+
+GET /my_index/my_type/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;should&quot;: [
+        { &quot;match&quot;: { &quot;title&quot;: &quot;brown&quot; }},
+        { &quot;match&quot;: { &quot;title&quot;: &quot;fox&quot;   }},
+        { &quot;match&quot;: { &quot;title&quot;: &quot;dog&quot;   }}
+      ],
+      &quot;minimum_should_match&quot;: 2 
+    }
+  }
+}
+</code></pre><blockquote>
+<p>查询语句提升权重 <br><br>boost 值越大 权重越高</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;bool&quot;: {
+            &quot;must&quot;: {
+                &quot;match&quot;: {  
+                    &quot;content&quot;: {
+                        &quot;query&quot;:    &quot;full text search&quot;,
+                        &quot;operator&quot;: &quot;and&quot;
+                    }
+                }
+            },
+            &quot;should&quot;: [
+                { &quot;match&quot;: {
+                    &quot;content&quot;: {
+                        &quot;query&quot;: &quot;Elasticsearch&quot;,
+                        &quot;boost&quot;: 3 
+                    }
+                }},
+                { &quot;match&quot;: {
+                    &quot;content&quot;: {
+                        &quot;query&quot;: &quot;Lucene&quot;,
+                        &quot;boost&quot;: 2 
+                    }
+                }}
+            ]
+        }
+    }
+}
+</code></pre><h3 id="GROUP-API"><a href="#GROUP-API" class="headerlink" title="GROUP API"></a>GROUP API</h3><blockquote>
+<p>terms 桶</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;aggs&quot; : { 
+        &quot;popular_colors&quot; : { 
+            &quot;terms&quot; : { 
+              &quot;field&quot; : &quot;color&quot;
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>条形图 （嵌套aggs）</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot;: 0,
+    &quot;aggs&quot;: {
+        &quot;price&quot; : {
+            &quot;histogram&quot;:{
+                &quot;field&quot;: &quot;price&quot;,
+                &quot;interval&quot;: 20000
+            },
+            &quot;aggs&quot;:{
+                &quot;revenue&quot;: {
+                   &quot;sum&quot;: { 
+                     &quot;field&quot; : &quot;price&quot;
+                   }
+                 }
+             }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>按日期统计 （date_histogram）</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+   &quot;size&quot; : 0,
+   &quot;aggs&quot;: {
+      &quot;sales&quot;: {
+         &quot;date_histogram&quot;: {
+            &quot;field&quot;: &quot;sold&quot;,
+            &quot;interval&quot;: &quot;month&quot;, 
+            &quot;format&quot;: &quot;yyyy-MM-dd&quot;,
+            &quot;min_doc_count&quot; : 0, //显示空的捅
+            &quot;extended_bounds&quot; : {  //强制显示范围
+                &quot;min&quot; : &quot;2014-01-01&quot;,
+                &quot;max&quot; : &quot;2014-12-31&quot;
+            }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>过滤后分桶</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;query&quot; : {
+        &quot;constant_score&quot;: {
+            &quot;filter&quot;: {
+                &quot;range&quot;: {
+                    &quot;price&quot;: {
+                        &quot;gte&quot;: 10000
+                    }
+                }
+            }
+        }
+    },
+    &quot;aggs&quot; : {
+        &quot;single_avg_price&quot;: {
+            &quot;avg&quot; : { &quot;field&quot; : &quot;price&quot; }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>桶过滤</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+   &quot;size&quot; : 0,
+   &quot;query&quot;:{
+      &quot;match&quot;: {
+         &quot;make&quot;: &quot;ford&quot;
+      }
+   },
+   &quot;aggs&quot;:{
+      &quot;recent_sales&quot;: {
+         &quot;filter&quot;: { 
+            &quot;range&quot;: {
+               &quot;sold&quot;: {
+                  &quot;from&quot;: &quot;now-1M&quot;
+               }
+            }
+         },
+         &quot;aggs&quot;: {
+            &quot;average_price&quot;:{
+               &quot;avg&quot;: {
+                  &quot;field&quot;: &quot;price&quot; 
+               }
+            }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>只过滤搜索结果，不过滤聚合结果post_filter</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;make&quot;: &quot;ford&quot;
+        }
+    },
+    &quot;post_filter&quot;: {    
+        &quot;term&quot; : {
+            &quot;color&quot; : &quot;green&quot;
+        }
+    },
+    &quot;aggs&quot; : {
+        &quot;all_colors&quot;: {
+            &quot;terms&quot; : { &quot;field&quot; : &quot;color&quot; }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>桶内置排序</p>
+<p><strong>tips：</strong> </p>
+<p>_count<br>按文档数排序。对 terms 、 histogram 、 date_histogram 有效。<br>_term<br>按词项的字符串值的字母顺序排序。只在 terms 内使用。<br>_key<br>按每个桶的键值数值排序（理论上与 _term 类似）。<br>只在 histogram 和 date_histogram 内使用。</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;aggs&quot; : {
+        &quot;colors&quot; : {
+            &quot;terms&quot; : {
+              &quot;field&quot; : &quot;color&quot;,
+              &quot;order&quot;: {
+                &quot;_count&quot; : &quot;asc&quot; 
+              }
+            }
+        }
+    }
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/02/01/Elasticsearch初认识/" itemprop="url">
+                  Elasticsearch初认识
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-01T00:00:00+08:00" content="2018-02-01">
+              2018-02-01
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/01/Elasticsearch初认识/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/01/Elasticsearch初认识/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Elasticsearch-Note"><a href="#Elasticsearch-Note" class="headerlink" title="Elasticsearch Note"></a>Elasticsearch Note</h2><h3 id="mappings"><a href="#mappings" class="headerlink" title="mappings"></a>mappings</h3><p>索引中每个文档都有类型，类型里都有他自己的映射mapping；<br>mapping定义了类型里的域，域的数据类型，以及如何如何处理域。</p>
+<h4 id="简单域数据类型"><a href="#简单域数据类型" class="headerlink" title="简单域数据类型"></a>简单域数据类型</h4><p>Elasticsearch 支持 如下简单域类型：</p>
+<ul>
+<li>字符串: string (5.x以上版本以text代替)</li>
+<li>整数 : byte, short, integer, long</li>
+<li>浮点数: float, double</li>
+<li>布尔型: boolean</li>
+<li>日期: date</li>
+</ul>
+<h4 id="复杂域数据类型"><a href="#复杂域数据类型" class="headerlink" title="复杂域数据类型"></a>复杂域数据类型</h4><ul>
+<li><p>多值域 </p>
+<pre><code>eq : { &quot;tag&quot;: [ &quot;search&quot;, &quot;nosql&quot; ]}
+</code></pre></li>
+<li><p>空域</p>
+<pre><code>eq : 
+&quot;null_value&quot;:               null,
+&quot;empty_array&quot;:              [],
+&quot;array_with_null_value&quot;:    [ null ]
+</code></pre></li>
+<li><p>多层级对象</p>
+<pre><code>{
+    &quot;tweet&quot;:            &quot;Elasticsearch is very flexible&quot;,
+    &quot;user&quot;: {
+        &quot;id&quot;:           &quot;@johnsmith&quot;,
+        &quot;gender&quot;:       &quot;male&quot;,
+        &quot;age&quot;:          26,
+        &quot;name&quot;: {
+            &quot;full&quot;:     &quot;John Smith&quot;,
+            &quot;first&quot;:    &quot;John&quot;,
+            &quot;last&quot;:     &quot;Smith&quot;
+        }
+    }
+}
+</code></pre></li>
+</ul>
+<h4 id="动态映射"><a href="#动态映射" class="headerlink" title="动态映射"></a>动态映射</h4><ul>
+<li>如果遇到新字段，对象 my_type 就会抛出异常</li>
+<li><p>而内部对象 stash 遇到新字段就会动态创建新字段</p>
+<pre><code>可以用 dynamic 配置来控制这种行为 ，可接受的选项如下：
+
+true   动态添加新的字段--缺省
+false    忽略新的字段
+strict    如果遇到新字段抛出异常
+
+tips:配置参数 dynamic 可以用在根 object 或任何 object 类型的字段上。
+     你可以将 dynamic 的默认值设置为 strict , 而只在指定的内部对象中开启它
+
+PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;dynamic&quot;:      &quot;strict&quot;, 
+            &quot;properties&quot;: {
+                &quot;title&quot;:  { &quot;type&quot;: &quot;string&quot;},
+                &quot;stash&quot;:  {
+                    &quot;type&quot;:     &quot;object&quot;,
+                    &quot;dynamic&quot;:  true 
+                }
+            }
+        }
+    }
+}
+</code></pre></li>
+</ul>
+<h4 id="自定义动态映射"><a href="#自定义动态映射" class="headerlink" title="自定义动态映射"></a>自定义动态映射</h4><h5 id="日期检查"><a href="#日期检查" class="headerlink" title="日期检查"></a>日期检查</h5><p>当 Elasticsearch 遇到一个新的字符串字段时，它会检测这个字段是否包含一个可识别的日期，比如 2014-01-01 。 如果它像日期，这个字段就会被作为 date 类型添加。否则，它会被作为 string 类型添加。</p>
+<pre><code>日期检测可以通过在根对象上设置 date_detection 为 false 来关闭    
+PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;date_detection&quot;: false
+        }
+    }
+}
+</code></pre><h4 id="动态模板"><a href="#动态模板" class="headerlink" title="动态模板"></a>动态模板</h4><pre><code>模板按照顺序来检测
+es ：以 _es 结尾的字段名需要使用 spanish 分词器。
+en ：所有其他字段使用 english 分词器。
+PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;dynamic_templates&quot;: [
+                { &quot;es&quot;: {
+                      &quot;match&quot;:              &quot;*_es&quot;, 
+                      &quot;match_mapping_type&quot;: &quot;string&quot;,
+                      &quot;mapping&quot;: {
+                          &quot;type&quot;:           &quot;string&quot;,
+                          &quot;analyzer&quot;:       &quot;spanish&quot;
+                      }
+                }},
+                { &quot;en&quot;: {
+                      &quot;match&quot;:              &quot;*&quot;, 
+                      &quot;match_mapping_type&quot;: &quot;string&quot;,
+                      &quot;mapping&quot;: {
+                          &quot;type&quot;:           &quot;string&quot;,
+                          &quot;analyzer&quot;:       &quot;english&quot;
+                      }
+                }}
+            ]
+}}}
+</code></pre><h4 id="如何查看映射"><a href="#如何查看映射" class="headerlink" title="如何查看映射"></a>如何查看映射</h4><blockquote>
+<p>GET /{索引}/_mapping/{类型}</p>
+</blockquote>
+<p><strong>RESPONSE</strong></p>
+<pre><code>{
+   &quot;gb&quot;: {
+     &quot;mappings&quot;: {
+         &quot;tweet&quot;: {
+            &quot;properties&quot;: {
+               &quot;date&quot;: {
+                  &quot;type&quot;: &quot;date&quot;,
+                  &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;
+               },
+               &quot;name&quot;: {
+                  &quot;type&quot;: &quot;string&quot;
+               },
+               &quot;tweet&quot;: {
+                  &quot;type&quot;: &quot;string&quot;
+               },
+               &quot;user_id&quot;: {
+                  &quot;type&quot;: &quot;long&quot;
+               }
+            }
+         }
+      }
+   }
+}
+</code></pre><h3 id="重建索引-Reindex"><a href="#重建索引-Reindex" class="headerlink" title="重建索引 Reindex"></a>重建索引 Reindex</h3><p>（增加新的类型到索引中，或者增加新的字段到类型中，但是不能添加新的分析器或者对现有的字段做改动）<br>对现有数据的这类改变最简单的办法就是重新索引：用新的设置创建新的索引并把文档从旧的索引复制到新的索引。</p>
+<h3 id="索引别名"><a href="#索引别名" class="headerlink" title="索引别名"></a>索引别名</h3><p>别名的用法：</p>
+<ul>
+<li>在运行的集群中可以无缝的从一个索引切换到另一个索引</li>
+<li>给多个索引分组 (例如， last_three_months)</li>
+<li>给索引的一个子集创建 视图</li>
+</ul>
+<p>tips: 别名的开销很小，应该广泛使用</p>
+<pre><code>创建索引 my_index_v1
+PUT /my_index_v1  
+
+将别名 my_index 指向my_index_v1
+PUT /my_index_v1/_alias/my_index
+
+别名指向哪一个索引
+GET /*/_alias/my_index
+
+索引有哪些别名
+GET /my_index_v1/_alias/*
+
+POST /_aliases
+{
+    &quot;actions&quot;: [
+        { &quot;remove&quot;: { &quot;index&quot;: &quot;my_index_v1&quot;, &quot;alias&quot;: &quot;my_index&quot; }},
+        { &quot;add&quot;:    { &quot;index&quot;: &quot;my_index_v2&quot;, &quot;alias&quot;: &quot;my_index&quot; }}
+    ]
+}
+</code></pre><h3 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h3><p>一个 分析器 就是在一个包里面组合了三种函数的一个包装器， 三种函数按照顺序被执行</p>
+<ul>
+<li><p>字符过滤器<br>字符过滤器 用来 整理 一个尚未被分词的字符串</p>
+</li>
+<li><p>分词器<br>一个分析器 必须 有一个唯一的分词器，分词器把字符串分解成单个词条或者词汇单元</p>
+</li>
+<li><p>词单元过滤器<br>经过分词，作为结果的 词单元流 会按照指定的顺序通过指定的词单元过滤器 。词单元过滤器可以修改、添加或者移除词单元。</p>
+</li>
+</ul>
+<h3 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h3><p>重点！！！</p>
+<p>倒排索引包含一个有序列表，列表包含所有文档出现过的不重复个体，或称为 词项 ，对于每一个词项，包含了它所有曾出现过文档的列表</p>
+<pre><code>Term  | Doc 1 | Doc 2 | Doc 3 | ...
+------------------------------------
+brown |   X   |       |  X    | ...
+fox   |   X   |   X   |  X    | ...
+quick |   X   |   X   |       | ...
+the   |   X   |       |  X    | ...
+</code></pre><h3 id="实时搜索"><a href="#实时搜索" class="headerlink" title="实时搜索"></a>实时搜索</h3><p>Elasticsearch 是 近 实时搜索（由于ES原理）: 文档的变化并不是立即对搜索可见，但会在一秒之内变为可见</p>
+<p>他们索引了一个文档然后尝试搜索它，但却没有搜到<br><strong>解决办法</strong>：</p>
+<pre><code>用 refresh API 执行一次手动刷新
+POST /_refresh 
+POST /blogs/_refresh 
+</code></pre><p>并不是所有的情况都需要每秒刷新<br>eg : 使用 Elasticsearch 索引大量的日志文件， 你可能想优化索引速度而不是近实时搜索</p>
+<pre><code>降低每个索引的刷新频率
+PUT /my_logs
+{
+  &quot;settings&quot;: {
+    &quot;refresh_interval&quot;: &quot;30s&quot; 
+  }
+}
+
+关闭自动刷新
+PUT /my_logs/_settings
+{ &quot;refresh_interval&quot;: -1 } 
+
+待开始使用该索引时，再刷新
+PUT /my_logs/_settings
+{ &quot;refresh_interval&quot;: &quot;1s&quot; }
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/03/21/友情/" itemprop="url">
+                  友情
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-21T22:21:23+08:00" content="2017-03-21">
+              2017-03-21
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/21/友情/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/21/友情/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>我是一个不善于交朋友的害羞男孩，从学习生涯开始，我的朋友不算多，但也足够陪伴我的一生。由于性格原因，我的朋友们想起来都是被动认识的。我从来没有主动地去交过朋友，感觉自己有种似乎愚蠢的想法，就是别人会来主动认识我，内心自认为孤是才华横溢、才高八斗，难道会有人不来跟我做朋友嘛。在我逐渐长大成人之后，突然发现有个问题值得思考。什么是朋友，我有哪些朋友，最好的朋友是谁…一系列关于友情的自我询问，让我陷入沉思。</p>
+<p>什么是朋友？</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/02/22/在家工作/" itemprop="url">
                   选择
                 </a>
@@ -1327,613 +2538,6 @@ this.getServletContext().getResourceAsStream(&quot;/form1.html&quot;)
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/09/Tomcat/" itemprop="url">
-                  Tomcat
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-09T13:59:27+08:00" content="2017-01-09">
-              2017-01-09
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/01/09/Tomcat/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/09/Tomcat/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>###Tomcat<br>Tomcat 服务器是一个免费的开放源代码的Web 应用服务器，属于轻量级应用服务器，在中小型系统和并发访问用户不是很多的场合下被普遍使用，是开发和调试JSP 程序的首选。</p>
-<p><strong>Tomcat的目录层次结构</strong><br>ps:想要用好Tomcat，就必须了解Tomcat的结构，通过配置Tomcat使之更适合我们的需要</p>
-<ul>
-<li>bin：存放启动和关闭Tomcat的脚本文件</li>
-<li>conf：存放Tomcat服务器的配置文件</li>
-<li>lib：存放Tomcat服务器的支撑jar包</li>
-<li>logs：存放Tomcat的日志文件</li>
-<li>temp：存放Tomcat运行时产生的临时文件</li>
-<li>webapps：web应用所在的目录，即供外接访问的web资源的存放目录</li>
-<li>work：Tomcat的工作目录</li>
-</ul>
-<p>Tomcat的默认端口是8080，改端口：tomcat的conf/server.xml的Connector标签</p>
-<p><strong>Web应用</strong><br>一个web应用由多个静态web资源和动态web资源组成；组成web应用的这些文件会由一个目录组织起来，这个目录称为web应用所在目录</p>
-<p>虚拟目录的映射 把主机上的资源映射到服务器对外提供的访问路径上</p>
-<p><strong>Tomcat体系结构</strong><br><img src="https://camo.githubusercontent.com/228a8cc0748b7e49d8ae991f625c71b43b0e2143/687474703a2f2f3778706836642e636f6d312e7a302e676c622e636c6f7564646e2e636f6d2f6a6176617765625f746f6d6361742545342542442539332545372542332542422545372542422539332545362539452538342e706e67" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/08/Java多线程小笔记/" itemprop="url">
-                  Java多线程小笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-08T20:27:26+08:00" content="2017-01-08">
-              2017-01-08
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/01/08/Java多线程小笔记/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/08/Java多线程小笔记/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="传统线程技术"><a href="#传统线程技术" class="headerlink" title="传统线程技术"></a>传统线程技术</h2><p><strong>1. 创建线程的方法</strong>  </p>
-<ul>
-<li>继承Thread类，覆盖run方法</li>
-<li>实现Runnable接口</li>
-</ul>
-<p><strong>2.  对Thread类的一些了解</strong></p>
-<ul>
-<li>Runnable是一个接口，里面有run方法</li>
-<li>target变量是Thread类中Runnable</li>
-<li>run是Thread类实现了Runnable的接口，重写的方法。</li>
-<li>start是启动线程的方法</li>
-<li>在Thread类中，调用关系为：start-&gt;start0-&gt;run-&gt;target.run</li>
-</ul>
-<p>Thread类的run方法源码</p>
-<pre><code>public void run() {
-    if (target != null) {
-         target.run();
-     }
- }
-</code></pre><p>Thread类的target属性</p>
-<pre><code>/* What will be run. */
-private Runnable target;
-</code></pre><p>target属性由private void init(ThreadGroup g, Runnable target, String name,long stackSize, AccessControlContext acc)方法初始化。init方法在Thread类的构造方法里被调用</p>
-<p><strong>3.线程范围内共享数据</strong></p>
-<p>什么是线程范围内共享数据——某个线程内如何共享数据，保证各个线程的数据不交叉。</p>
-<p>这么说来，可以用Map这个数据结构来实现，定义一个Map，线程为键，数据为值，Map中的每一项即是为每个线程准备的数据,这样在一个线程中数据是一致的。</p>
-<pre><code>package com.iot.thread;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
-/**
- * Created by brian on 2016/2/4.
- */
-public class ThreadScopeShareData {
-    //准备一个哈希表，为每个线程准备数据
-    private  static Map&lt;Thread,Integer&gt; threadData = new HashMap&lt;&gt;();
-    public static void main(String[] args) {
-        for(int i=0;i&lt;2;i++){
-            new Thread(
-                    new Runnable() {
-                @Override
-                public void run() {
-                    int data = new Random().nextInt();
-                    threadData.put(Thread.currentThread(),data);
-                    System.out.println(Thread.currentThread()+&quot; put data：&quot;+data);
-                    new A().get();
-                    new B().get();
-                }
-            }).start();
-        }
-    }
-    static  class A{
-        public void get(){
-            int data = threadData.get(Thread.currentThread());
-            System.out.println(&quot;A from &quot;+Thread.currentThread()+&quot; get data &quot;+data);
-        }
-    }
-
-    static  class B{
-        public void get(){
-            int data = threadData.get(Thread.currentThread());
-            System.out.println(&quot;B from &quot;+Thread.currentThread()+&quot; get data &quot;+data);
-        }
-    }
-}
-</code></pre><p>但是API给开发者提供了一个ThreadLocal类<br><a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/ThreadLocal.html" target="_blank" rel="external">java.lang:Class ThreadLocal<t></t></a></p>
-<ul>
-<li><p>单变量<br>使用ThreadLocal类型的对象代替Map即可</p>
-</li>
-<li><p>多变量<br>定义一个对象来封装多个变量，然后在ThreadLocal中存储整个对象<br>多变量时，最好将ThreadLocal类放在数据类的内部，数据类采用单例模式，这样，新建对象和获取对象都会更方便，同时封装性更强。</p>
-</li>
-</ul>
-<p><strong>4.多线程访问共享数据</strong><br>几种方式</p>
-<ul>
-<li>线程执行的代码相同，使用同一个Runnable对象，Runnable对象中有共享数据</li>
-<li>线程执行的代码不同，将共享数据封装在另一个对象中（操作数据的方法也在该对象完成），将    这个对象逐一传递给各个Runnable对象[<strong>本质：共享数据的对象作为参数传给Runnable对象</strong>]</li>
-<li>线程执行的代码不同，将Runnable对象作为某一个的内部类，共享数据作为这个外部类的成员变量（操作数据的方法放在外部类）。[<strong>本质：不同内部类共享外部类数据</strong>]</li>
-<li>结合上两种方式，将共享数据封装在另一对象中（操作数据的方法也在该对象完成），该对象作为这个外部类的成员变量，将Runnable对象作为内部类</li>
-</ul>
-<p>设计5个线程，其中三个线程每次对j增加1，另外两个线程对j每次减少1</p>
-<pre><code>package com.iot.thread;
-
-/**
- * Created by brian on 2016/2/4.
- */
-public class MutiThreadShareData {
-
-    private static MutiShareData mutiShareData = new MutiShareData();
-
-    public static void main(String[] args) {
-
-        for(int i=0;i&lt;3;i++){
-            new Thread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println(Thread.currentThread()+&quot;:{j from &quot;+ mutiShareData.getJ()+&quot; + to: &quot;+mutiShareData.increment()+&quot;}&quot;);
-                        }
-                    }
-            ).start();
-        }
-
-        for(int i=0;i&lt;2;i++){
-            new Thread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println(Thread.currentThread()+&quot;:{j from &quot;+ mutiShareData.getJ()+&quot; - to: &quot;+mutiShareData.decrement()+&quot;}&quot;);
-                        }
-                    }
-            ).start();
-        }
-    }
-
-}
-
-/**
- * 将共享数据封装在另一对象中（操作数据的方法也在该对象完成）
- */
-class MutiShareData{
-    private int j = 0;
-    public synchronized  int increment(){
-        return  ++j;
-    }
-    public synchronized int  decrement(){
-        return --j;
-    }
-
-    public synchronized int getJ() {
-        return j;
-    }
-
-    public synchronized void setJ(int j) {
-        this.j = j;
-    }
-}    
-</code></pre><p><strong>5.多线程并发库</strong></p>
-<blockquote>
-<p>原子性操作类<br>java.util.concurrent.atomic包下的类:<br><a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/util/concurrent/atomic/package-summary.html" target="_blank" rel="external">Package java.util.concurrent.atomic</a></p>
-<p>线程池<br><a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/util/concurrent/Executors.html" target="_blank" rel="external">java.util.concurrent:Class Executors</a></p>
-<p>常用线程池<br>几种常用的的生成线程池的方法：<br>newCacheThreadPool<br>newFixedThreadPool<br>newScheduledThreadPool<br>newSingleThreadExecutor<br>newSingleThreadScheduledExecutor</p>
-</blockquote>
-<pre><code>ex：newFixedThreadPool
-
-ExecutorService threadPool = Executors.newFixedThreadPool(3);
-for(int i=0;i&lt;10;i++){
-    threadPool.execute(new Runnable() {
-        @Override
-        public void run() {
-            System.out.println(Thread.currentThread().getName());
-        }
-    });
-}
-
-用线程池启动定时器
-例子：类似Timer的定时执行
-
-Executors.newScheduledThreadPool(3).scheduleAtFixedRate(
-            new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println(&quot;ScheduledThreadPool &quot;+Thread.currentThread().getName());
-                }
-            },3,1, TimeUnit.SECONDS);
-</code></pre><blockquote>
-<p>Callable&amp;Future<br>ExecutorService在Executor的基础上增加了一些方法，其中有两个核心的方法：</p>
-<p>Future&lt;?&gt; submit(Runnable task)</p>
-<p><t> Future<t> submit(Callable<t> task)</t></t></t></p>
-<p>这两个方法都是向线程池中提交任务，它们的区别在于Runnable在执行完毕后没有结果，Callable执行完毕后有一个结果。这在多个线程中传递状态和结果是非常有用的。另外他们的相同点在于都返回一个Future对象。Future对象可以阻塞线程直到运行完毕（获取结果，如果有的话），也可以取消任务执行，当然也能够检测任务是否被取消或者是否执行完毕。</p>
-</blockquote>
-<pre><code>Lock
-Lock功能类似传统多线程技术里的synchronized，实现线程互斥，但更加面向对象。将需要互斥的代码片段放到lock.lock();和lock.unlock();之间。
-
-class A{
-    private Lock lock = new ReentrantLock();
-
-    public void function(){
-        lock.lock();
-        try{
-            //功能代码
-        }finally{
-            lock.unlock();
-        }
-    }
-}
-
-
-读写锁
-java.util.concurrent.locks:Class ReentrantReadWriteLock
-javaDoc文档读写锁例子,缓存:
-
-class CachedData {
-   Object data;
-   volatile boolean cacheValid;
-   final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
-
-   void processCachedData() {
-     rwl.readLock().lock();
-     if (!cacheValid) {
-       // Must release read lock before acquiring write lock
-       rwl.readLock().unlock();
-       rwl.writeLock().lock();
-       try {
-         // Recheck state because another thread might have
-         // acquired write lock and changed state before we did.
-         if (!cacheValid) {
-           data = ...
-           cacheValid = true;
-         }
-         // Downgrade by acquiring read lock before releasing write lock
-         rwl.readLock().lock();
-       } finally {
-         rwl.writeLock().unlock(); // Unlock write, still hold read
-       }
-     }
-
-     try {
-       use(data);
-     } finally {
-       rwl.readLock().unlock();
-     }
-   }
- }
-重点注意在释放写锁前加读锁那部分代码，
-注释为// Downgrade by acquiring read lock before releasing write lock。
-自己挂了写锁，再挂读锁是可以的，这面涉及的技巧以后再研究。
-
-Condition
-Condition类似于传统多线程技术中的Object.wait和Object.notify,实现线程间同步。
-javaDoc文档例子，可阻塞队列
-
-class BoundedBuffer例子
-
-class BoundedBuffer {
-   final Lock lock = new ReentrantLock();
-   final Condition notFull  = lock.newCondition(); 
-   final Condition notEmpty = lock.newCondition(); 
-
-   final Object[] items = new Object[100];
-   int putptr, takeptr, count;
-
-   public void put(Object x) throws InterruptedException {
-     lock.lock();
-     try {
-       while (count == items.length)
-         notFull.await();
-       items[putptr] = x;
-       if (++putptr == items.length) putptr = 0;
-       ++count;
-       notEmpty.signal();
-     } finally {
-       lock.unlock();
-     }
-   }
-
-   public Object take() throws InterruptedException {
-     lock.lock();
-     try {
-       while (count == 0)
-         notEmpty.await();
-       Object x = items[takeptr];
-       if (++takeptr == items.length) takeptr = 0;
-       --count;
-       notFull.signal();
-       return x;
-     } finally {
-       lock.unlock();
-     }
-   }
- }
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/06/Java类加载器小笔记/" itemprop="url">
-                  Java类加载器小笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-06T09:40:51+08:00" content="2017-01-06">
-              2017-01-06
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/01/06/Java类加载器小笔记/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/06/Java类加载器小笔记/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>##类加载器##</p>
-<p>java类加载器——在运行时    类加载器在JVM中动态地加载所需的类，把classpath下的那些.class文件加载进内存，转成字节码。</p>
-<p>##三个机制##</p>
-<p><strong>java类加载器基于三个机制：委托，可见，单一</strong> </p>
-<ul>
-<li><p>委托机制：将加载类的请求传给父类加载器，如果父类加载器找不到或者加载不了该类，则再加载它。</p>
-</li>
-<li><p>可见性机制：父类加载器加载的类能被子类加载器所见，但子类加载器加载的类父类加载器是看不见的。</p>
-</li>
-<li><p>单一性机制：一个类只能被同一种加载器加载一次</p>
-</li>
-</ul>
-<p>##默认类加载器##<br><strong>系统默认三个类加载器</strong></p>
-<ul>
-<li>BootStrap</li>
-<li>ExtClassLoader</li>
-<li>AppClassLoader</li>
-</ul>
-<p>tips:类加载器也是java类，但BootStrap不是</p>
-<p>public class ClassLoaderTest {<br>    public static void main(String[] args) {<br>        System.out.println(System.class.getClassLoader());<br>    }<br>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1979,7 +2583,7 @@ class BoundedBuffer {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">16</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -2053,7 +2657,7 @@ class BoundedBuffer {
         <div class="copyright" >
   
   &copy;  2016 - 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
