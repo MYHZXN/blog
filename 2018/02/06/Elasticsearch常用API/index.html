@@ -1,0 +1,1356 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MYH" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="INDEX API
+创建索引
+tips：如果你想禁止自动创建索引，你 可以通过在 config/elasticsearch.yml 的每个节点下添加下面的配置：action.auto_create_index: false
+
+PUT /my_index
+{
+    &amp;quot;settings&amp;quot;: { 
+        &amp;quot;number_of_shards&amp;quot; :   1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch常用API">
+<meta property="og:url" content="http://yoursite.com/2018/02/06/Elasticsearch常用API/index.html">
+<meta property="og:site_name" content="MYH">
+<meta property="og:description" content="INDEX API
+创建索引
+tips：如果你想禁止自动创建索引，你 可以通过在 config/elasticsearch.yml 的每个节点下添加下面的配置：action.auto_create_index: false
+
+PUT /my_index
+{
+    &amp;quot;settings&amp;quot;: { 
+        &amp;quot;number_of_shards&amp;quot; :   1">
+<meta property="og:updated_time" content="2018-02-06T08:50:20.404Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elasticsearch常用API">
+<meta name="twitter:description" content="INDEX API
+创建索引
+tips：如果你想禁止自动创建索引，你 可以通过在 config/elasticsearch.yml 的每个节点下添加下面的配置：action.auto_create_index: false
+
+PUT /my_index
+{
+    &amp;quot;settings&amp;quot;: { 
+        &amp;quot;number_of_shards&amp;quot; :   1">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/06/Elasticsearch常用API/"/>
+
+  <title> Elasticsearch常用API | MYH </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d4af761da5fd0af3ce5328c44c731009";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MYH</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elasticsearch常用API
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-06T00:00:00+08:00" content="2018-02-06">
+              2018-02-06
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/06/Elasticsearch常用API/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/06/Elasticsearch常用API/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="INDEX-API"><a href="#INDEX-API" class="headerlink" title="INDEX API"></a>INDEX API</h3><blockquote>
+<p>创建索引</p>
+<p><strong>tips：</strong>如果你想禁止自动创建索引，你 可以通过在 config/elasticsearch.yml 的每个节点下添加下面的配置：action.auto_create_index: false</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;settings&quot;: { 
+        &quot;number_of_shards&quot; :   1, //每个索引的主分片数，默认值是 5 。这个配置在索引创建后不能修改。
+        &quot;number_of_replicas&quot; : 0  //每个主分片的副本数，默认值是 1 。对于活动的索引库，这个配置可以随时修改。         
+     },
+    &quot;mappings&quot;: {
+        &quot;type_one&quot;: { ... any mappings ... },
+        &quot;type_two&quot;: { ... any mappings ... },
+        ...
+    }
+}
+</code></pre><blockquote>
+<p>修改索引设置</p>
+</blockquote>
+<pre><code>PUT /my_temp_index/_settings
+{
+    &quot;number_of_replicas&quot;: 1
+}    
+</code></pre><blockquote>
+<p>设置一个自定义分析器</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;settings&quot;: {
+        &quot;analysis&quot;: {
+            &quot;char_filter&quot;: { ... custom character filters ... },
+            &quot;tokenizer&quot;:   { ...    custom tokenizers     ... },
+            &quot;filter&quot;:      { ...   custom token filters   ... },
+            &quot;analyzer&quot;:    { ...    custom analyzers      ... }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>应用分析器</p>
+</blockquote>
+<pre><code>PUT /my_index/_mapping/my_type
+{
+    &quot;properties&quot;: {
+        &quot;title&quot;: {
+            &quot;type&quot;:      &quot;string&quot;,
+            &quot;analyzer&quot;:  &quot;my_analyzer&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>删除一个索引</p>
+</blockquote>
+<pre><code>DELETE /my_index
+</code></pre><blockquote>
+<p>删除多个索引</p>
+</blockquote>
+<pre><code>DELETE /index_one,index_two
+DELETE /index_*
+</code></pre><blockquote>
+<p>删除全部索引</p>
+</blockquote>
+<pre><code>DELETE /_all
+DELETE /*
+</code></pre><blockquote>
+<p>禁用_source存储</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;_source&quot;: {
+                &quot;enabled&quot;:  false
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>禁用_all字段</p>
+</blockquote>
+<pre><code>PUT /my_index/_mapping/my_type
+{
+    &quot;my_type&quot;: {
+        &quot;_all&quot;: { &quot;enabled&quot;: false }
+    }
+}
+</code></pre><blockquote>
+<p>通过 include_in_all 设置来逐个控制字段是否要包含在 _all 字段中，默认值是 true。</p>
+<p>在一个对象(或根对象)上设置 `include_in_all 可以修改这个对象中的所有字段的默认行为。</p>
+</blockquote>
+<pre><code>PUT /my_index/my_type/_mapping
+{
+    &quot;my_type&quot;: {
+        &quot;include_in_all&quot;: false,
+        &quot;properties&quot;: {
+            &quot;title&quot;: {
+                &quot;type&quot;:           &quot;string&quot;,
+                &quot;include_in_all&quot;: true
+            },
+            ...
+        }
+    }
+}
+</code></pre><blockquote>
+<p>使用 _default_ 映射为所有的类型禁用 _all 字段， 而只在 blog 类型启用</p>
+</blockquote>
+<pre><code>PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;_default_&quot;: {
+            &quot;_all&quot;: { &quot;enabled&quot;:  false }
+        },
+        &quot;blog&quot;: {
+            &quot;_all&quot;: { &quot;enabled&quot;:  true  }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>查看映射</p>
+</blockquote>
+<pre><code>GET /gb/_mapping/tweet
+</code></pre><blockquote>
+<p>更新映射</p>
+</blockquote>
+<pre><code>PUT /gb
+{
+  &quot;mappings&quot;: {
+    &quot;tweet&quot; : {
+      &quot;properties&quot; : {
+        &quot;tweet&quot; : {
+          &quot;type&quot; :    &quot;string&quot;,
+          &quot;analyzer&quot;: &quot;english&quot;
+        },
+        &quot;date&quot; : {
+          &quot;type&quot; :   &quot;date&quot;
+        },
+        &quot;name&quot; : {
+          &quot;type&quot; :   &quot;string&quot;
+        },
+        &quot;user_id&quot; : {
+          &quot;type&quot; :   &quot;long&quot;
+        }
+      }
+    }
+  }
+}
+
+PUT /gb/_mapping/tweet
+{
+  &quot;properties&quot; : {
+    &quot;tag&quot; : {
+      &quot;type&quot; :    &quot;string&quot;,
+      &quot;index&quot;:    &quot;not_analyzed&quot;
+    }
+  }
+}
+</code></pre><blockquote>
+<p>映射分析</p>
+</blockquote>
+<pre><code>GET /gb/_analyze
+{
+  &quot;field&quot;: &quot;tweet&quot;,
+  &quot;text&quot;: &quot;Black-cats&quot; 
+}
+</code></pre><blockquote>
+<p>批量新增文档</p>
+</blockquote>
+<pre><code>POST /my_index/my_type/_bulk
+{ &quot;index&quot;: { &quot;_id&quot;: 1 }}
+{ &quot;title&quot;: &quot;The quick brown fox&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 2 }}
+{ &quot;title&quot;: &quot;The quick brown fox jumps over the lazy dog&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 3 }}
+{ &quot;title&quot;: &quot;The quick brown fox jumps over the quick dog&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 4 }}
+{ &quot;title&quot;: &quot;Brown fox brown dog&quot; }
+</code></pre><h3 id="Query-API"><a href="#Query-API" class="headerlink" title="Query API"></a>Query API</h3><blockquote>
+<p>空查询</p>
+</blockquote>
+<pre><code>GET /_search
+{}
+
+GET /index_2014*/type1,type2/_search
+{}
+
+GET /_search
+{
+    &quot;query&quot;: {
+        &quot;match_all&quot;: {}
+    }
+}
+</code></pre><blockquote>
+<p>分页</p>
+</blockquote>
+<pre><code>GET /_search
+{
+  &quot;from&quot;: 30,
+  &quot;size&quot;: 10
+}
+</code></pre><blockquote>
+<p>查询请求</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;tweet&quot;: &quot;elasticsearch&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>match查询</p>
+<p><strong>tips：</strong>如果你在一个全文字段上使用 match 查询，在执行查询前，它将用正确的分析器去分析查询字符串<br>如果在一个精确值的字段上使用它， 例如数字、日期、布尔或者一个 not_analyzed 字符串字段，那么它将会精确匹配给定的值</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;tweet&quot;: &quot;elasticsearch&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>multi_match </p>
+<p><strong>tips：</strong>查询可以在多个字段上执行相同的 match 查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;multi_match&quot;: {
+            &quot;query&quot;:    &quot;full text search&quot;,
+            &quot;fields&quot;:   [ &quot;title&quot;, &quot;body&quot; ]
+        }
+    }    
+}
+</code></pre><blockquote>
+<p>range 查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;range&quot;: {
+            &quot;age&quot;: {
+                &quot;gte&quot;:  20,
+                &quot;lt&quot;:   30
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>term查询</p>
+<p><strong>tips：</strong>用于精确值 匹配，这些精确值可能是数字、时间、布尔或者那些 not_analyzed 的字符串</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;term&quot;: { &quot;age&quot;: 26 }
+    }
+}
+</code></pre><blockquote>
+<p>terms查询</p>
+<p><strong>tips：</strong>terms 查询和 term 查询一样，但它允许你指定多值进行匹配。如果这个字段包含了指定值中的任何一个值，那么这个文档满足条件</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;terms&quot;: { 
+            &quot;tag&quot;: [ &quot;search&quot;, &quot;full_text&quot;, &quot;nosql&quot; ] 
+        }
+    }
+}
+</code></pre><blockquote>
+<p>exists 查询</p>
+<p><strong>tips：</strong>用于查找那些指定字段中有值 (exists) 的文档</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;exists&quot;: { 
+            &quot;field&quot;:    &quot;title&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>missing 查询</p>
+<p><strong>tips：</strong>用于查找那些指定字段中无值 (missing) 的文档</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+         &quot;missing&quot;: { 
+            &quot;field&quot;:    &quot;title&quot;
+        }
+    }
+}
+</code></pre><blockquote>
+<p>组合查询</p>
+<p><strong>tips：</strong></p>
+<ul>
+<li>must 文档 必须 匹配这些条件才能被包含进来。</li>
+<li>must_not 文档 必须不 匹配这些条件才能被包含进来。</li>
+<li>should 如果满足这些语句中的任意语句，将增加 _score ，否则，无任何影响。它们主要用于修正每个文档的相关性得分。</li>
+<li>filter 必须 匹配，但它以不评分、过滤模式来进行。这些语句对评分没有贡献，只是根据过滤标准来排除或包含文档。</li>
+</ul>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+         &quot;bool&quot;: { 
+             &quot;must&quot;: {
+                 &quot;match&quot;: { &quot;part_name&quot;: &quot;保险&quot; }
+             },
+             &quot;must_not&quot; : {
+                 &quot;match&quot;: { &quot;create_person&quot; : &quot;STDINGSUN2&quot; }
+             },
+             &quot;should&quot; : {
+                 &quot;range&quot; : { &quot;price1&quot; : { &quot;gte&quot; : 1000} }
+             }
+         }
+    }
+}
+</code></pre><blockquote>
+<p>不评分查询</p>
+<p><strong>tips：</strong>用于你只需要执行一个 filter 而没有其它查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : { 
+        &quot;constant_score&quot;:   {
+            &quot;filter&quot;: {
+                &quot;term&quot;: { &quot;category&quot;: &quot;ebooks&quot; } 
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>验证查询语句</p>
+</blockquote>
+<pre><code>GET /gb/tweet/_validate/query
+{
+   &quot;query&quot;: {
+      &quot;tweet&quot; : {
+         &quot;match&quot; : &quot;really powerful&quot;
+      }
+   }
+}
+</code></pre><blockquote>
+<p>验证查询语句(带解释)</p>
+</blockquote>
+<pre><code>GET /gb/tweet/_validate/query?explain 
+{
+   &quot;query&quot;: {
+      &quot;tweet&quot; : {
+         &quot;match&quot; : &quot;really powerful&quot;
+      }
+   }
+}
+</code></pre><blockquote>
+<p>排序查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+         &quot;bool&quot; : {
+             &quot;filter&quot; : {
+                 &quot;match&quot; : {
+                     &quot;create_person&quot; : &quot;GD001&quot;
+                 }
+             }
+         }
+    },
+    &quot;sort&quot; : { &quot;@timestamp&quot; : { &quot;order&quot; : &quot;desc&quot; } }
+}
+</code></pre><blockquote>
+<p>多级排序查询</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+        &quot;bool&quot; : {
+            &quot;must&quot;:   { &quot;match&quot;: { &quot;tweet&quot;: &quot;manage text search&quot; }},
+            &quot;filter&quot; : { &quot;term&quot; : { &quot;user_id&quot; : 2 }}
+        }
+    },
+    &quot;sort&quot;: [
+        { &quot;date&quot;:   { &quot;order&quot;: &quot;desc&quot; }},
+        { &quot;_score&quot;: { &quot;order&quot;: &quot;desc&quot; }}
+    ]
+}
+</code></pre><blockquote>
+<p>字段多值的排序查询</p>
+<p><strong>tips：</strong>对于数字或日期，你可以将多值字段减为单值，这可以通过使用 min 、 max 、 avg 或是 sum 排序模式 </p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot; : {
+        &quot;sort&quot;: {
+            &quot;dates&quot;: {
+                &quot;order&quot;: &quot;asc&quot;,
+                &quot;mode&quot;:  &quot;min&quot;
+            }
+    }
+}
+</code></pre><blockquote>
+<p>查询（获取特定的字段）</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;:   { &quot;match_all&quot;: {}},
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;created&quot; ]
+}
+</code></pre><blockquote>
+<p>查询（去除_source）</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;_source&quot;: false,
+    &quot;query&quot; : {
+        &quot;term&quot; : { &quot;user&quot; : &quot;kimchy&quot; }
+    }
+}
+</code></pre><blockquote>
+<p>查询（过滤某些字段）</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;_source&quot;: {
+        &quot;includes&quot;: [ &quot;obj1.*&quot;, &quot;obj2.*&quot; ],
+        &quot;excludes&quot;: [ &quot;*.description&quot; ]
+    },
+    &quot;query&quot; : {
+        &quot;term&quot; : { &quot;user&quot; : &quot;kimchy&quot; }
+    }
+}
+</code></pre><h3 id="DEEP-QUERY-API"><a href="#DEEP-QUERY-API" class="headerlink" title="DEEP QUERY API"></a>DEEP QUERY API</h3><blockquote>
+<p>SELECT &ensp;product<br>&ensp;&ensp;FROM   &ensp;products<br>&ensp;&ensp;WHERE  &ensp;(price = 20 OR productID = “XHDK-A-1293-#fJ3”)<br>&ensp;&ensp;&ensp;&ensp;AND  (price != 30)</p>
+</blockquote>
+<pre><code>GET /my_store/products/_search
+{
+   &quot;query&quot; : {
+      &quot;filtered&quot; : { 
+         &quot;filter&quot; : {
+            &quot;bool&quot; : {
+              &quot;should&quot; : [
+                 { &quot;term&quot; : {&quot;price&quot; : 20}}, 
+                 { &quot;term&quot; : {&quot;productID&quot; : &quot;XHDK-A-1293-#fJ3&quot;}} 
+              ],
+              &quot;must_not&quot; : {
+                 &quot;term&quot; : {&quot;price&quot; : 30} 
+              }
+           }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>SELECT document<br>&ensp;&ensp;FROM   products<br>&ensp;&ensp;&ensp;&ensp;WHERE  productID = “KDKE-B-9947-#kL5”<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;      OR (productID = “JODL-X-1937-#pV7”<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;           AND price = 30 ) </p>
+</blockquote>
+<pre><code>GET /my_store/products/_search
+{
+   &quot;query&quot; : {
+      &quot;filtered&quot; : {
+         &quot;filter&quot; : {
+            &quot;bool&quot; : {
+              &quot;should&quot; : [
+                { &quot;term&quot; : {&quot;productID&quot; : &quot;KDKE-B-9947-#kL5&quot;}}, 
+                { &quot;bool&quot; : { 
+                  &quot;must&quot; : [
+                    { &quot;term&quot; : {&quot;productID&quot; : &quot;JODL-X-1937-#pV7&quot;}}, 
+                    { &quot;term&quot; : {&quot;price&quot; : 30}} 
+                  ]
+                }}
+              ]
+           }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>range 日期高级查法</p>
+</blockquote>
+<pre><code>&quot;range&quot; : {
+    &quot;timestamp&quot; : {
+        &quot;gt&quot; : &quot;now-1h&quot;
+    }
+}
+
+&quot;range&quot; : {
+    &quot;timestamp&quot; : {
+        &quot;gt&quot; : &quot;2014-01-01 00:00:00&quot;,
+        &quot;lt&quot; : &quot;2014-01-01 00:00:00||+1M&quot; 
+    }
+}
+</code></pre><blockquote>
+<p>match查询（提高精度）</p>
+</blockquote>
+<pre><code>GET /my_index/my_type/_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;title&quot;: {      
+                &quot;query&quot;:    &quot;BROWN DOG!&quot;,
+                &quot;operator&quot;: &quot;and&quot;
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>match查询（控制精度）<br><br>match 查询支持 minimum_should_match 最小匹配参数</p>
+</blockquote>
+<pre><code>GET /my_index/my_type/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;title&quot;: {
+        &quot;query&quot;:                &quot;quick brown dog&quot;,
+        &quot;minimum_should_match&quot;: &quot;75%&quot;
+      }
+    }
+  }
+}
+
+GET /my_index/my_type/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;should&quot;: [
+        { &quot;match&quot;: { &quot;title&quot;: &quot;brown&quot; }},
+        { &quot;match&quot;: { &quot;title&quot;: &quot;fox&quot;   }},
+        { &quot;match&quot;: { &quot;title&quot;: &quot;dog&quot;   }}
+      ],
+      &quot;minimum_should_match&quot;: 2 
+    }
+  }
+}
+</code></pre><blockquote>
+<p>查询语句提升权重 <br><br>boost 值越大 权重越高</p>
+</blockquote>
+<pre><code>GET /_search
+{
+    &quot;query&quot;: {
+        &quot;bool&quot;: {
+            &quot;must&quot;: {
+                &quot;match&quot;: {  
+                    &quot;content&quot;: {
+                        &quot;query&quot;:    &quot;full text search&quot;,
+                        &quot;operator&quot;: &quot;and&quot;
+                    }
+                }
+            },
+            &quot;should&quot;: [
+                { &quot;match&quot;: {
+                    &quot;content&quot;: {
+                        &quot;query&quot;: &quot;Elasticsearch&quot;,
+                        &quot;boost&quot;: 3 
+                    }
+                }},
+                { &quot;match&quot;: {
+                    &quot;content&quot;: {
+                        &quot;query&quot;: &quot;Lucene&quot;,
+                        &quot;boost&quot;: 2 
+                    }
+                }}
+            ]
+        }
+    }
+}
+</code></pre><h3 id="GROUP-API"><a href="#GROUP-API" class="headerlink" title="GROUP API"></a>GROUP API</h3><blockquote>
+<p>terms 桶</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;aggs&quot; : { 
+        &quot;popular_colors&quot; : { 
+            &quot;terms&quot; : { 
+              &quot;field&quot; : &quot;color&quot;
+            }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>条形图 （嵌套aggs）</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot;: 0,
+    &quot;aggs&quot;: {
+        &quot;price&quot; : {
+            &quot;histogram&quot;:{
+                &quot;field&quot;: &quot;price&quot;,
+                &quot;interval&quot;: 20000
+            },
+            &quot;aggs&quot;:{
+                &quot;revenue&quot;: {
+                   &quot;sum&quot;: { 
+                     &quot;field&quot; : &quot;price&quot;
+                   }
+                 }
+             }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>按日期统计 （date_histogram）</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+   &quot;size&quot; : 0,
+   &quot;aggs&quot;: {
+      &quot;sales&quot;: {
+         &quot;date_histogram&quot;: {
+            &quot;field&quot;: &quot;sold&quot;,
+            &quot;interval&quot;: &quot;month&quot;, 
+            &quot;format&quot;: &quot;yyyy-MM-dd&quot;,
+            &quot;min_doc_count&quot; : 0, //显示空的捅
+            &quot;extended_bounds&quot; : {  //强制显示范围
+                &quot;min&quot; : &quot;2014-01-01&quot;,
+                &quot;max&quot; : &quot;2014-12-31&quot;
+            }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>过滤后分桶</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;query&quot; : {
+        &quot;constant_score&quot;: {
+            &quot;filter&quot;: {
+                &quot;range&quot;: {
+                    &quot;price&quot;: {
+                        &quot;gte&quot;: 10000
+                    }
+                }
+            }
+        }
+    },
+    &quot;aggs&quot; : {
+        &quot;single_avg_price&quot;: {
+            &quot;avg&quot; : { &quot;field&quot; : &quot;price&quot; }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>桶过滤</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+   &quot;size&quot; : 0,
+   &quot;query&quot;:{
+      &quot;match&quot;: {
+         &quot;make&quot;: &quot;ford&quot;
+      }
+   },
+   &quot;aggs&quot;:{
+      &quot;recent_sales&quot;: {
+         &quot;filter&quot;: { 
+            &quot;range&quot;: {
+               &quot;sold&quot;: {
+                  &quot;from&quot;: &quot;now-1M&quot;
+               }
+            }
+         },
+         &quot;aggs&quot;: {
+            &quot;average_price&quot;:{
+               &quot;avg&quot;: {
+                  &quot;field&quot;: &quot;price&quot; 
+               }
+            }
+         }
+      }
+   }
+}
+</code></pre><blockquote>
+<p>只过滤搜索结果，不过滤聚合结果post_filter</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;query&quot;: {
+        &quot;match&quot;: {
+            &quot;make&quot;: &quot;ford&quot;
+        }
+    },
+    &quot;post_filter&quot;: {    
+        &quot;term&quot; : {
+            &quot;color&quot; : &quot;green&quot;
+        }
+    },
+    &quot;aggs&quot; : {
+        &quot;all_colors&quot;: {
+            &quot;terms&quot; : { &quot;field&quot; : &quot;color&quot; }
+        }
+    }
+}
+</code></pre><blockquote>
+<p>桶内置排序</p>
+<p><strong>tips：</strong> </p>
+<p>_count<br>按文档数排序。对 terms 、 histogram 、 date_histogram 有效。<br>_term<br>按词项的字符串值的字母顺序排序。只在 terms 内使用。<br>_key<br>按每个桶的键值数值排序（理论上与 _term 类似）。<br>只在 histogram 和 date_histogram 内使用。</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+    &quot;size&quot; : 0,
+    &quot;aggs&quot; : {
+        &quot;colors&quot; : {
+            &quot;terms&quot; : {
+              &quot;field&quot; : &quot;color&quot;,
+              &quot;order&quot;: {
+                &quot;_count&quot; : &quot;asc&quot; 
+              }
+            }
+        }
+    }
+}
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/01/Elasticsearch初认识/" rel="next" title="Elasticsearch初认识">
+                <i class="fa fa-chevron-left"></i> Elasticsearch初认识
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/06/Elasticsearch常用API/"
+           data-title="Elasticsearch常用API" data-url="http://yoursite.com/2018/02/06/Elasticsearch常用API/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="MYH" />
+          <p class="site-author-name" itemprop="name">MYH</p>
+          <p class="site-description motion-element" itemprop="description">死亡如风，常伴吾身</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/MYHZXN" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2094911920/home?wvr=5" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#INDEX-API"><span class="nav-number">1.</span> <span class="nav-text">INDEX API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Query-API"><span class="nav-number">2.</span> <span class="nav-text">Query API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DEEP-QUERY-API"><span class="nav-number">3.</span> <span class="nav-text">DEEP QUERY API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GROUP-API"><span class="nav-number">4.</span> <span class="nav-text">GROUP API</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MYH</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"myhzxn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

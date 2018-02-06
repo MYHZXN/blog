@@ -1,0 +1,829 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MYH" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Elasticsearch Notemappings索引中每个文档都有类型，类型里都有他自己的映射mapping；mapping定义了类型里的域，域的数据类型，以及如何如何处理域。
+简单域数据类型Elasticsearch 支持 如下简单域类型：
+
+字符串: string (5.x以上版本以text代替)
+整数 : byte, short, integer, long
+浮点数: float, do">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch初认识">
+<meta property="og:url" content="http://yoursite.com/2018/02/01/Elasticsearch初认识/index.html">
+<meta property="og:site_name" content="MYH">
+<meta property="og:description" content="Elasticsearch Notemappings索引中每个文档都有类型，类型里都有他自己的映射mapping；mapping定义了类型里的域，域的数据类型，以及如何如何处理域。
+简单域数据类型Elasticsearch 支持 如下简单域类型：
+
+字符串: string (5.x以上版本以text代替)
+整数 : byte, short, integer, long
+浮点数: float, do">
+<meta property="og:updated_time" content="2018-02-06T08:43:31.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elasticsearch初认识">
+<meta name="twitter:description" content="Elasticsearch Notemappings索引中每个文档都有类型，类型里都有他自己的映射mapping；mapping定义了类型里的域，域的数据类型，以及如何如何处理域。
+简单域数据类型Elasticsearch 支持 如下简单域类型：
+
+字符串: string (5.x以上版本以text代替)
+整数 : byte, short, integer, long
+浮点数: float, do">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/01/Elasticsearch初认识/"/>
+
+  <title> Elasticsearch初认识 | MYH </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d4af761da5fd0af3ce5328c44c731009";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MYH</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elasticsearch初认识
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-02-01T00:00:00+08:00" content="2018-02-01">
+              2018-02-01
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/01/Elasticsearch初认识/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/01/Elasticsearch初认识/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Elasticsearch-Note"><a href="#Elasticsearch-Note" class="headerlink" title="Elasticsearch Note"></a>Elasticsearch Note</h2><h3 id="mappings"><a href="#mappings" class="headerlink" title="mappings"></a>mappings</h3><p>索引中每个文档都有类型，类型里都有他自己的映射mapping；<br>mapping定义了类型里的域，域的数据类型，以及如何如何处理域。</p>
+<h4 id="简单域数据类型"><a href="#简单域数据类型" class="headerlink" title="简单域数据类型"></a>简单域数据类型</h4><p>Elasticsearch 支持 如下简单域类型：</p>
+<ul>
+<li>字符串: string (5.x以上版本以text代替)</li>
+<li>整数 : byte, short, integer, long</li>
+<li>浮点数: float, double</li>
+<li>布尔型: boolean</li>
+<li>日期: date</li>
+</ul>
+<h4 id="复杂域数据类型"><a href="#复杂域数据类型" class="headerlink" title="复杂域数据类型"></a>复杂域数据类型</h4><ul>
+<li><p>多值域 </p>
+<pre><code>eq : { &quot;tag&quot;: [ &quot;search&quot;, &quot;nosql&quot; ]}
+</code></pre></li>
+<li><p>空域</p>
+<pre><code>eq : 
+&quot;null_value&quot;:               null,
+&quot;empty_array&quot;:              [],
+&quot;array_with_null_value&quot;:    [ null ]
+</code></pre></li>
+<li><p>多层级对象</p>
+<pre><code>{
+    &quot;tweet&quot;:            &quot;Elasticsearch is very flexible&quot;,
+    &quot;user&quot;: {
+        &quot;id&quot;:           &quot;@johnsmith&quot;,
+        &quot;gender&quot;:       &quot;male&quot;,
+        &quot;age&quot;:          26,
+        &quot;name&quot;: {
+            &quot;full&quot;:     &quot;John Smith&quot;,
+            &quot;first&quot;:    &quot;John&quot;,
+            &quot;last&quot;:     &quot;Smith&quot;
+        }
+    }
+}
+</code></pre></li>
+</ul>
+<h4 id="动态映射"><a href="#动态映射" class="headerlink" title="动态映射"></a>动态映射</h4><ul>
+<li>如果遇到新字段，对象 my_type 就会抛出异常</li>
+<li><p>而内部对象 stash 遇到新字段就会动态创建新字段</p>
+<pre><code>可以用 dynamic 配置来控制这种行为 ，可接受的选项如下：
+
+true   动态添加新的字段--缺省
+false    忽略新的字段
+strict    如果遇到新字段抛出异常
+
+tips:配置参数 dynamic 可以用在根 object 或任何 object 类型的字段上。
+     你可以将 dynamic 的默认值设置为 strict , 而只在指定的内部对象中开启它
+
+PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;dynamic&quot;:      &quot;strict&quot;, 
+            &quot;properties&quot;: {
+                &quot;title&quot;:  { &quot;type&quot;: &quot;string&quot;},
+                &quot;stash&quot;:  {
+                    &quot;type&quot;:     &quot;object&quot;,
+                    &quot;dynamic&quot;:  true 
+                }
+            }
+        }
+    }
+}
+</code></pre></li>
+</ul>
+<h4 id="自定义动态映射"><a href="#自定义动态映射" class="headerlink" title="自定义动态映射"></a>自定义动态映射</h4><h5 id="日期检查"><a href="#日期检查" class="headerlink" title="日期检查"></a>日期检查</h5><p>当 Elasticsearch 遇到一个新的字符串字段时，它会检测这个字段是否包含一个可识别的日期，比如 2014-01-01 。 如果它像日期，这个字段就会被作为 date 类型添加。否则，它会被作为 string 类型添加。</p>
+<pre><code>日期检测可以通过在根对象上设置 date_detection 为 false 来关闭    
+PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;date_detection&quot;: false
+        }
+    }
+}
+</code></pre><h4 id="动态模板"><a href="#动态模板" class="headerlink" title="动态模板"></a>动态模板</h4><pre><code>模板按照顺序来检测
+es ：以 _es 结尾的字段名需要使用 spanish 分词器。
+en ：所有其他字段使用 english 分词器。
+PUT /my_index
+{
+    &quot;mappings&quot;: {
+        &quot;my_type&quot;: {
+            &quot;dynamic_templates&quot;: [
+                { &quot;es&quot;: {
+                      &quot;match&quot;:              &quot;*_es&quot;, 
+                      &quot;match_mapping_type&quot;: &quot;string&quot;,
+                      &quot;mapping&quot;: {
+                          &quot;type&quot;:           &quot;string&quot;,
+                          &quot;analyzer&quot;:       &quot;spanish&quot;
+                      }
+                }},
+                { &quot;en&quot;: {
+                      &quot;match&quot;:              &quot;*&quot;, 
+                      &quot;match_mapping_type&quot;: &quot;string&quot;,
+                      &quot;mapping&quot;: {
+                          &quot;type&quot;:           &quot;string&quot;,
+                          &quot;analyzer&quot;:       &quot;english&quot;
+                      }
+                }}
+            ]
+}}}
+</code></pre><h4 id="如何查看映射"><a href="#如何查看映射" class="headerlink" title="如何查看映射"></a>如何查看映射</h4><blockquote>
+<p>GET /{索引}/_mapping/{类型}</p>
+</blockquote>
+<p><strong>RESPONSE</strong></p>
+<pre><code>{
+   &quot;gb&quot;: {
+     &quot;mappings&quot;: {
+         &quot;tweet&quot;: {
+            &quot;properties&quot;: {
+               &quot;date&quot;: {
+                  &quot;type&quot;: &quot;date&quot;,
+                  &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;
+               },
+               &quot;name&quot;: {
+                  &quot;type&quot;: &quot;string&quot;
+               },
+               &quot;tweet&quot;: {
+                  &quot;type&quot;: &quot;string&quot;
+               },
+               &quot;user_id&quot;: {
+                  &quot;type&quot;: &quot;long&quot;
+               }
+            }
+         }
+      }
+   }
+}
+</code></pre><h3 id="重建索引-Reindex"><a href="#重建索引-Reindex" class="headerlink" title="重建索引 Reindex"></a>重建索引 Reindex</h3><p>（增加新的类型到索引中，或者增加新的字段到类型中，但是不能添加新的分析器或者对现有的字段做改动）<br>对现有数据的这类改变最简单的办法就是重新索引：用新的设置创建新的索引并把文档从旧的索引复制到新的索引。</p>
+<h3 id="索引别名"><a href="#索引别名" class="headerlink" title="索引别名"></a>索引别名</h3><p>别名的用法：</p>
+<ul>
+<li>在运行的集群中可以无缝的从一个索引切换到另一个索引</li>
+<li>给多个索引分组 (例如， last_three_months)</li>
+<li>给索引的一个子集创建 视图</li>
+</ul>
+<p>tips: 别名的开销很小，应该广泛使用</p>
+<pre><code>创建索引 my_index_v1
+PUT /my_index_v1  
+
+将别名 my_index 指向my_index_v1
+PUT /my_index_v1/_alias/my_index
+
+别名指向哪一个索引
+GET /*/_alias/my_index
+
+索引有哪些别名
+GET /my_index_v1/_alias/*
+
+POST /_aliases
+{
+    &quot;actions&quot;: [
+        { &quot;remove&quot;: { &quot;index&quot;: &quot;my_index_v1&quot;, &quot;alias&quot;: &quot;my_index&quot; }},
+        { &quot;add&quot;:    { &quot;index&quot;: &quot;my_index_v2&quot;, &quot;alias&quot;: &quot;my_index&quot; }}
+    ]
+}
+</code></pre><h3 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h3><p>一个 分析器 就是在一个包里面组合了三种函数的一个包装器， 三种函数按照顺序被执行</p>
+<ul>
+<li><p>字符过滤器<br>字符过滤器 用来 整理 一个尚未被分词的字符串</p>
+</li>
+<li><p>分词器<br>一个分析器 必须 有一个唯一的分词器，分词器把字符串分解成单个词条或者词汇单元</p>
+</li>
+<li><p>词单元过滤器<br>经过分词，作为结果的 词单元流 会按照指定的顺序通过指定的词单元过滤器 。词单元过滤器可以修改、添加或者移除词单元。</p>
+</li>
+</ul>
+<h3 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h3><p>重点！！！</p>
+<p>倒排索引包含一个有序列表，列表包含所有文档出现过的不重复个体，或称为 词项 ，对于每一个词项，包含了它所有曾出现过文档的列表</p>
+<pre><code>Term  | Doc 1 | Doc 2 | Doc 3 | ...
+------------------------------------
+brown |   X   |       |  X    | ...
+fox   |   X   |   X   |  X    | ...
+quick |   X   |   X   |       | ...
+the   |   X   |       |  X    | ...
+</code></pre><h3 id="实时搜索"><a href="#实时搜索" class="headerlink" title="实时搜索"></a>实时搜索</h3><p>Elasticsearch 是 近 实时搜索（由于ES原理）: 文档的变化并不是立即对搜索可见，但会在一秒之内变为可见</p>
+<p>他们索引了一个文档然后尝试搜索它，但却没有搜到<br><strong>解决办法</strong>：</p>
+<pre><code>用 refresh API 执行一次手动刷新
+POST /_refresh 
+POST /blogs/_refresh 
+</code></pre><p>并不是所有的情况都需要每秒刷新<br>eg : 使用 Elasticsearch 索引大量的日志文件， 你可能想优化索引速度而不是近实时搜索</p>
+<pre><code>降低每个索引的刷新频率
+PUT /my_logs
+{
+  &quot;settings&quot;: {
+    &quot;refresh_interval&quot;: &quot;30s&quot; 
+  }
+}
+
+关闭自动刷新
+PUT /my_logs/_settings
+{ &quot;refresh_interval&quot;: -1 } 
+
+待开始使用该索引时，再刷新
+PUT /my_logs/_settings
+{ &quot;refresh_interval&quot;: &quot;1s&quot; }
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/21/友情/" rel="next" title="友情">
+                <i class="fa fa-chevron-left"></i> 友情
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/06/Elasticsearch常用API/" rel="prev" title="Elasticsearch常用API">
+                Elasticsearch常用API <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/01/Elasticsearch初认识/"
+           data-title="Elasticsearch初认识" data-url="http://yoursite.com/2018/02/01/Elasticsearch初认识/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="MYH" />
+          <p class="site-author-name" itemprop="name">MYH</p>
+          <p class="site-description motion-element" itemprop="description">死亡如风，常伴吾身</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/MYHZXN" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2094911920/home?wvr=5" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Elasticsearch-Note"><span class="nav-number">1.</span> <span class="nav-text">Elasticsearch Note</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mappings"><span class="nav-number">1.1.</span> <span class="nav-text">mappings</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简单域数据类型"><span class="nav-number">1.1.1.</span> <span class="nav-text">简单域数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复杂域数据类型"><span class="nav-number">1.1.2.</span> <span class="nav-text">复杂域数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态映射"><span class="nav-number">1.1.3.</span> <span class="nav-text">动态映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义动态映射"><span class="nav-number">1.1.4.</span> <span class="nav-text">自定义动态映射</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#日期检查"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">日期检查</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态模板"><span class="nav-number">1.1.5.</span> <span class="nav-text">动态模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何查看映射"><span class="nav-number">1.1.6.</span> <span class="nav-text">如何查看映射</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重建索引-Reindex"><span class="nav-number">1.2.</span> <span class="nav-text">重建索引 Reindex</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引别名"><span class="nav-number">1.3.</span> <span class="nav-text">索引别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析器"><span class="nav-number">1.4.</span> <span class="nav-text">分析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倒排索引"><span class="nav-number">1.5.</span> <span class="nav-text">倒排索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实时搜索"><span class="nav-number">1.6.</span> <span class="nav-text">实时搜索</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MYH</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"myhzxn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
