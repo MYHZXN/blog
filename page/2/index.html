@@ -258,6 +258,142 @@
             
               
                 
+                <a class="post-title-link" href="/2017/01/09/Http入门/" itemprop="url">
+                  Http入门
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-09T16:17:35+08:00" content="2017-01-09">
+              2017-01-09
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/09/Http入门/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/09/Http入门/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>##请求（Request）<br>一个完整的HTTP请求包括：一个请求行，若干请求头，以及实体内容</p>
+<p>###请求头字段</p>
+<ul>
+<li>Accept：用于告诉服务器，客户机支持的数据类型</li>
+<li>Accept-Charset：用于告诉服务器，客户机采用的编码</li>
+<li>Accept-Encoding：用于告诉服务器，客户机支持数据压缩格式</li>
+<li>Accent-Language：客户机的语言环境</li>
+<li>Host：客户机通过这个头告诉服务器，想访问的主机名</li>
+<li>if-Modified-Since：客户机通过这个头告诉服务器，资源的缓存时间</li>
+<li>Refer：客户机通过这个头告诉服务器，它是从哪个资源访问服务器的（防盗链）</li>
+<li>User-Agent：客户机通过这个头告诉服务器，客户机的软件环境</li>
+<li>Cookie：客户机通过这个头向服务器带数据</li>
+<li>Connection：这个请求完了，是保持连接还是关闭</li>
+<li>Range：断点下载<br> bytes=n1-n2，传输范围n1到n2字节<br> bytes=n-，传输web资源中第n个字节以后的所有内容<br> bytes=n，传输最后n个字节</li>
+</ul>
+<p>##响应（Response）<br>一个HTTP响应代表服务器向客户端回送的数据，包括：一个状态行、若干消息头、以及实体内容</p>
+<p><strong>响应状态行</strong><br><img src="https://camo.githubusercontent.com/11b8dccb06e9b7b2fcbd479107cf068eb9ce711b/687474703a2f2f3778706836642e636f6d312e7a302e676c622e636c6f7564646e2e636f6d2f6a6176617765625f48747470526573706f6e73655374617475732e706e67" alt=""></p>
+<p><strong>响应头字段</strong></p>
+<ul>
+<li>Location：这个头配合302状态码使用，用于告诉客户机找谁(location和302实现请求重定向)</li>
+<li>Server：服务器通过这个头，告诉浏览器服务器的类型</li>
+<li>Content-Encoding:服务器通过这个头，数据的压缩格式 (相关java知识:GZIPOutputStream,包装流/底层流)</li>
+<li>Content-Length:服务器通过这个头，告诉浏览器回送数据的长度</li>
+<li>Content-Type:服务器通过这个头，告诉浏览器回送数据的类型</li>
+<li>Last-Modified:服务器通过这个头，告诉浏览器当前资源的缓存时间</li>
+<li>Refresh:服务器通过这个头，告诉浏览器隔多长时间刷新一次</li>
+<li>Content-Disposition:服务器通过这个头，告诉浏览器以下载方式打开</li>
+<li>Transfer-Encoding:服务器通过这个头，告诉浏览器数据的传送格式</li>
+<li>Etag:缓存相关的头部，用于实时性要求高的系统</li>
+<li>Expires:服务器通过这个头，告诉浏览器把回送的资源缓存多长时间，-1或0则不缓存</li>
+<li>Cache-Control和Pragma:no-cache,服务器通过这两个头，也是控制浏览器不要缓存数据</li>
+<li>Connection:断开连接/保持连接</li>
+<li>Date:当前时间</li>
+<li>Accept-Ranges:用来说明web服务器是否支持range。支持返回bytes;不支持返回none</li>
+<li>Content-Range:制定了返回web资源的字节范围，格式：n1-n2/n_total</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/01/09/Tomcat/" itemprop="url">
                   Tomcat
                 </a>
@@ -1264,7 +1400,7 @@ class BoundedBuffer {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">17</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
